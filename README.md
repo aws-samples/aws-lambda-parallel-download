@@ -73,6 +73,11 @@ is the amount of S3 object download it will perform and the
 `objectKey` attribute is the name of the object that will be
 downloaded `repeat` times.
 
+New accounts might not be able to configure the Lambda function with
+more than 3,008 MB, so add the `powerValues` property to the request
+JSON with a list of memory values below this limit, if this is your
+case.
+
 When the execution ends, you can get the URL with the results from
 the __Execution input & output__ tab, property
 `stateMachine.visualization`.
