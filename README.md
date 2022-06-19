@@ -63,7 +63,8 @@ At the __Start execution__, use the following JSON:
 {
   "lambdaARN": "--ParallelDownloadStack.LambdaFunctionARN--",
   "num": 5,
-  "payload": {"repeat": 2000, "objectKey": "sample.json"}
+  "payload": {"repeat": 2000, "objectKey": "sample.json"},
+  "powerValues": [512,1024,2048,3072,4096,10240]
 }
 ```
 
@@ -74,9 +75,9 @@ is the amount of S3 object download it will perform and the
 downloaded `repeat` times.
 
 New accounts might not be able to configure the Lambda function with
-more than 3,008 MB, so add the `powerValues` property to the request
-JSON with a list of memory values below this limit, if this is your
-case.
+more than 3,008 MB, so you may need to adjust the `powerValues`
+property with a list of memory values below this limit, if this is
+your case.
 
 When the execution ends, you can get the URL with the results from
 the __Execution input & output__ tab, property
