@@ -84,3 +84,14 @@ the __Execution input & output__ tab, property
 `stateMachine.visualization`.
 
 [3]: https://console.aws.amazon.com/states/home
+
+## Clean-up
+
+1. Remove the objects at the S3 bucket:
+
+   `aws s3 rm --recursive s3://--ParallelDownloadStack.LambdaFunctionARN--`
+
+2. Destroy the stack:
+
+   `cdk destroy`
+
