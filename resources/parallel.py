@@ -1,8 +1,6 @@
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: MIT-0
 
-"""Lambda handler for parallel object download from S3"""
-
 from concurrent.futures import ThreadPoolExecutor
 import json
 import multiprocessing
@@ -19,7 +17,6 @@ else:
     MAX_WORKERS = None
 
 BUCKET_NAME = os.environ["BUCKET"]
-OBJECT_KEY = os.environ["OBJECT_KEY"]
 
 # Setup the S3 client
 # Sets the max_pool_connections to allow each thread to use the same client
@@ -53,8 +50,9 @@ def handler(event, context):
     :rtype: dict
     """
     if event is None:
-        event = {}
+        raise "missing event"
     repeat = int(event.get("repeat", "10000"))
+    object_key = event["objectKey"]
 
     result = {
         "cpu_count": multiprocessing.cpu_count(),
@@ -68,7 +66,7 @@ def handler(event, context):
 
     # Download the object `repeat` times
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-        for s3_object in executor.map(download_s3, (OBJECT_KEY for _ in range(repeat))):
+        for s3_object in executor.map(download_s3, (object_key for _ in range(repeat))):
             result["total_reads"] += 1
             result["total_size"] += len(s3_object)
             data = json.loads(s3_object)

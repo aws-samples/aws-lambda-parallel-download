@@ -11,9 +11,11 @@ class PowerTuning(Construct):
     def __init__(self, scope: Construct, construct_id: str, *, function_arn: str, **kwargs):
         super().__init__(scope, construct_id, **kwargs)
 
-        self.sam = sam.CfnApplication(self, 'powerTuner',
+        self.sam = sam.CfnApplication(
+            self, 'powerTuner',
             location=sam.CfnApplication.ApplicationLocationProperty(
-                application_id='arn:aws:serverlessrepo:us-east-1:451282441545:applications/aws-lambda-power-tuning',
+                application_id=('arn:aws:serverlessrepo:us-east-1:451282441545:'
+                                'applications/aws-lambda-power-tuning'),
                 semantic_version='4.2.0',
             ),
             parameters={
