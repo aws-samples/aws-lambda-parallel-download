@@ -45,6 +45,13 @@ For CPU bound process, process should be used instead of threads.
 
    `cdk deploy`
 
+5. Upload the sample file
+
+   `aws s3 cp sample.json s3://--ParallelDownloadStack.SampleS3BucketName--`
+
+   Substitute the `--ParallelDownloadStack.SampleS3BucketDomainName--`
+   with the value from the CDK output.
+
 ## Run the AWS Lambda Power Tuning
 
 At the [Step functions AWS console][3], locate the State machine with
@@ -56,13 +63,19 @@ At the __Start execution__, use the following JSON:
 {
   "lambdaARN": "--ParallelDownloadStack.LambdaFunctionARN--",
   "num": 5,
-  "payload": {"repeat": 2000}
+  "payload": {"repeat": 2000, "objectKey": "sample.json"}
 }
 ```
 
 Substitute the `--ParallelDownloadStack.LambdaFunctionARN--` with the
 value from the CDK output. The `repeat` attribute at the __payload__
-is the amount of S3 object download it will perform.
+is the amount of S3 object download it will perform and the
+`objectKey` attribute is the name of the object that will be
+downloaded `repeat` times.
+
+When the execution ends, you can get the URL with the results from
+the __Execution input & output__ tab, property
+`stateMachine.visualization`.
 
 [3]: https://console.aws.amazon.com/states/home
 
