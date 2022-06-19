@@ -2,12 +2,12 @@
 # SPDX-License-Identifier: MIT-0
 
 from aws_cdk import (
-    # Duration,
     CfnOutput,
     Stack,
-    # aws_sqs as sqs,
+    aws_iam as iam,
 )
 from constructs import Construct
+from cdk_nag import NagSuppressions, NagPackSuppression
 
 from . import sample_bucket, parallel_lambda, powertuning
 
@@ -17,19 +17,44 @@ class ParallelDownloadStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        sample = sample_bucket.Bucket(self, "SampleBucket", sample_repeat=43)
-        lambda_fn = parallel_lambda.Function(self, "ParallelLambda",
-            bucket_name=sample.bucket.bucket_name, object_key=sample.object_key)
-        sample.bucket.grant_read(lambda_fn.lambda_function)
+        sample = sample_bucket.Bucket(self, "SampleBucket")
+        CfnOutput(
+            self, "SampleS3BucketName",
+            value=sample.bucket.bucket_name,
+        )
 
-        CfnOutput(self, "LambdaFunctionARN",
+        lambda_fn = parallel_lambda.Function(
+            self, "ParallelLambda",
+            bucket_name=sample.bucket.bucket_name
+        )
+        lambda_fn.lambda_function.role.add_to_principal_policy(iam.PolicyStatement(
+            actions=["s3:GetObject"],
+            resources=[sample.bucket.arn_for_objects("*")],
+        ))
+        NagSuppressions.add_resource_suppressions_by_path(
+            self,
+            f"{lambda_fn.lambda_function.role.node.path}/DefaultPolicy/Resource",
+            [
+                NagPackSuppression(
+                    id="AwsSolutions-IAM5",
+                    reason=("The user can upload any object to the bucket, so the resource needs"
+                            "wildcard"),
+                    applies_to=[
+                        f"Resource::<{self.get_logical_id(sample.bucket.node.default_child)}.Arn>/*"
+                    ]
+                )
+            ]
+        )
+        CfnOutput(
+            self, "LambdaFunctionARN",
             value=lambda_fn.lambda_function.function_arn,
-        ) 
+        )
 
-        tuning = powertuning.PowerTuning(self, "PowerTuning",
+        tuning = powertuning.PowerTuning(
+            self, "PowerTuning",
             function_arn=lambda_fn.lambda_function.function_arn
         )
-        CfnOutput(self, "StateMachineARN",
+        CfnOutput(
+            self, "StateMachineARN",
             value=tuning.sam.get_att("Outputs.StateMachineARN").to_string()
         )
-        
