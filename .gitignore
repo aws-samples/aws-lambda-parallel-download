@@ -11,3 +11,8 @@ cdk.out
 
 acat-output.json
 acat_report/
+
+.vscode/
+.python-version
+
+.DS_store
