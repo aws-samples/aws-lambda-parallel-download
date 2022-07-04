@@ -1,97 +1,27 @@
-# Parallel I/O bound process in AWS Lambda with Python
+# Parallel dowload from Amazon S3 using Lambda function
 
-Sample project to run I/O bound process in AWS Lambda with Python.
+Sample code to parallel read objects from Amazon S3 buckets which
+showcases how to efficiently run I/O bound tasks using AWS Lambda
+functions using Python.
 
-This CDK project creates a sample JSON file in an Amazon S3 bucket
-that is downloaded in parallel by a Lambda function. The [AWS Lambda
-Power Tuning][1].
-is also deployed to visualize and fine-tune the memory/power
-configuration of Lambda functions.
+For I/O bound tasks, you can use multiple threads. In this sample
+code, the concurrent.futures.ThreadPoolExecutor is used with a 1,000
+maximum simultaneous threads. Lambda functions allow up to 1,024
+threads, and you should consider that 1 thread is your main process.
+You also need to increase the max pool connections in botocore so all
+threads can execute the S3 object download simultaneously.
 
-The parallel download is done using threads through the
-[concurrent.futures.ThreadPoolExecutor][2]. The solution is target
-Python 3.8 or above as the ThreadPoolExecutor is optimized to reuse
-idle worker threads.
+The sample code uses one 8.3 KB object at S3 with JSON data read 
+multiple times. After reading the object, it is decoded from JSON to 
+Python object. The result after running this sample was 1,000 reads 
+processed in 3 seconds and 10,000 reads processed in 25 seconds using 
+a Lambda configured with 2,304 MB. Increasing the Lambda memory didn't 
+help to decrease the time to run the task.​
 
-For CPU bound process, process should be used instead of threads.
+The code in this repository helps you set up the following target
+architecture.
 
-[1]: https://github.com/alexcasalboni/aws-lambda-power-tuning
-[2]: https://docs.python.org/3.9/library/concurrent.futures.html#concurrent.futures.ThreadPoolExecutor
+![Target architecture diagram](architecture.png "Architecture image")​
 
-## Requirements
-
-* [Python 3.8 or above](https://www.python.org/downloads/)
-
-* [AWS CDK v2](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html)
-
-* A working AWS account
-
-
-## Deployment
-
-1. Create a python 3.8+ .venv in the root of repository:
-   
-   `python3 -m venv .venv`
-
-2. Activate the virtualenv:
-
-   `source .venv/bin/activate`
-
-3. Install the dependencies:
-
-   `pip install -r requirements.txt`
-
-4. Deploy the stack
-
-   `cdk deploy`
-
-5. Upload the sample file
-
-   `aws s3 cp sample.json s3://--ParallelDownloadStack.SampleS3BucketName--`
-
-   Substitute the `--ParallelDownloadStack.SampleS3BucketDomainName--`
-   with the value from the CDK output.
-
-## Run the AWS Lambda Power Tuning
-
-At the [Step functions AWS console][3], locate the State machine with
-the ARN from the CDK output `ParallelDownloadStack.StateMachineARN`.
-
-At the __Start execution__, use the following JSON:
-
-```
-{
-  "lambdaARN": "--ParallelDownloadStack.LambdaFunctionARN--",
-  "num": 5,
-  "payload": {"repeat": 2000, "objectKey": "sample.json"},
-  "powerValues": [512,1024,2048,3072,4096,10240]
-}
-```
-
-Substitute the `--ParallelDownloadStack.LambdaFunctionARN--` with the
-value from the CDK output. The `repeat` attribute at the __payload__
-is the amount of S3 object download it will perform and the
-`objectKey` attribute is the name of the object that will be
-downloaded `repeat` times.
-
-New accounts might not be able to configure the Lambda function with
-more than 3,008 MB, so you may need to adjust the `powerValues`
-property with a list of memory values below this limit, if this is
-your case.
-
-When the execution ends, you can get the URL with the results from
-the __Execution input & output__ tab, property
-`stateMachine.visualization`.
-
-[3]: https://console.aws.amazon.com/states/home
-
-## Clean-up
-
-1. Remove the objects at the S3 bucket:
-
-   `aws s3 rm --recursive s3://--ParallelDownloadStack.LambdaFunctionARN--`
-
-2. Destroy the stack:
-
-   `cdk destroy`
-
+For prerequisites and instructions for using this AWS Prescriptive
+Guidance pattern, see [Parallel reading from S3 in Lambda](https://apg-library.amazonaws.com/content/b46e9b16-9842-4291-adfa-3ef012b89aec). 
