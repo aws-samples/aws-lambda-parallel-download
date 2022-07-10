@@ -6,6 +6,7 @@ import json
 import multiprocessing
 import os
 import threading
+import time
 
 import boto3
 import botocore
@@ -27,13 +28,7 @@ client_s3 = boto3.client("s3", config=client_config)
 
 
 def download_s3(key: str) -> bytes:
-    """Download an object from the S3 bucket
-
-    :param key: the key of the object.
-    :type key: str
-    :returns: the object data
-    :rtype: bytes
-    """
+    """Download an object from the S3 bucket"""
     obj = client_s3.get_object(Bucket=BUCKET_NAME, Key=key)
     return obj["Body"].read()
 
@@ -43,35 +38,37 @@ def handler(event, context):
 
     The `event` parameter is an object with the following properties:
     * repeat (default 10000): number of times to download the object from S3.
-
-    :param event: an object with the parameters.
-    :type event: dict
-    :returns: an object with information about the execution.
-    :rtype: dict
+    * objectKey: the object key to download in parallel
     """
-    if event is None:
-        raise "missing event"
-    repeat = int(event.get("repeat", "10000"))
+    repeat = int(event.get("repeat", 10000))
     object_key = event["objectKey"]
 
-    result = {
-        "cpu_count": multiprocessing.cpu_count(),
-        "threads": {
-            "start": threading.active_count()
-        },
-        "total_reads": 0,
-        "total_size": 0,
-        "total_records": 0,
-    }
+    print("CPU count:", multiprocessing.cpu_count())
+    print("threads in use at start:", threading.active_count())
+
+    total_reads = 0
+    total_size_read = 0
+    total_records_read = 0
+    total_time = None
 
     # Download the object `repeat` times
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+        start = time.perf_counter()
+
         for s3_object in executor.map(download_s3, (object_key for _ in range(repeat))):
-            result["total_reads"] += 1
-            result["total_size"] += len(s3_object)
+            total_reads += 1
+            total_size_read += len(s3_object)
             data = json.loads(s3_object)
-            result["total_records"] += len(data)
+            total_records_read += len(data)
 
-        result["threads"]["used"] = threading.active_count()
+        total_time = time.perf_counter() - start
 
-    return result
+        print("total threads used:", threading.active_count())
+
+    return {
+        "objects_read": total_reads,
+        "bytes_read": total_size_read,
+        "time_sec": total_time,
+        "objects_per_sec": round(total_reads/total_time),
+        "bytes_per_sec": round(total_size_read/total_time),
+    }
