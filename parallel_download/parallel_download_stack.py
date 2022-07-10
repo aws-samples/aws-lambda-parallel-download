@@ -27,6 +27,7 @@ class ParallelDownloadStack(Stack):
             self, "ParallelLambda",
             bucket_name=sample.bucket.bucket_name
         )
+
         lambda_fn.lambda_function.role.add_to_principal_policy(iam.PolicyStatement(
             actions=["s3:GetObject"],
             resources=[sample.bucket.arn_for_objects("*")],
