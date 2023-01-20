@@ -38,7 +38,7 @@ class ParallelDownloadStack(Stack):
             [
                 NagPackSuppression(
                     id="AwsSolutions-IAM5",
-                    reason=("The user can upload any object to the bucket, so the resource needs"
+                    reason=("The user can upload any object to the bucket, so the resource needs "
                             "wildcard"),
                     applies_to=[
                         f"Resource::<{self.get_logical_id(sample.bucket.node.default_child)}.Arn>/*"
