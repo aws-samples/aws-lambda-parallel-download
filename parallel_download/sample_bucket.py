@@ -6,6 +6,7 @@ from aws_cdk import (
     aws_s3 as s3,
 )
 from constructs import Construct
+from cdk_nag import NagSuppressions, NagPackSuppression
 
 
 class Bucket(Construct):
@@ -17,6 +18,16 @@ class Bucket(Construct):
             block_public_access=s3.BlockPublicAccess.BLOCK_ALL,
             encryption=s3.BucketEncryption.S3_MANAGED,
             enforce_ssl=True,
-            server_access_logs_prefix="logs",
             removal_policy=RemovalPolicy.DESTROY,
+        )
+
+        NagSuppressions.add_resource_suppressions(
+            self.bucket,
+            [
+                NagPackSuppression(
+                    id="AwsSolutions-S1",
+                    reason=("Access Logs aren't needed in this demo application. "
+                            "Enable it in production."),
+                )
+            ]
         )
