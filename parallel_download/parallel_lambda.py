@@ -20,9 +20,9 @@ class Function(Construct):
                  bucket_name: str,
                  max_workers: int = 1000,
                  runtime: lambda_.Runtime = lambda_.Runtime.PYTHON_3_11,
-                 memory_size: Union[int, float, None] = 2304,
+                 memory_size: Union[int, float, None] = 2048,
                  architecture: lambda_.Architecture = lambda_.Architecture.ARM_64,
-                 timeout: Duration = Duration.seconds(300),
+                 timeout: Duration = Duration.seconds(600),
                  **kwargs):
         super().__init__(scope, construct_id)
 

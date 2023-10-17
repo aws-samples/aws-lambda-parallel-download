@@ -20,6 +20,7 @@ class PowerTuning(Construct):
             ),
             parameters={
                 "lambdaResource": f"{function_arn}*",
-                "PowerValues": "512,1024,2048,3072,4096,10240"
+                "PowerValues": "512,1024,2048,3072,4096,10240",
+                "totalExecutionTimeout": "600"
             },
         )
