@@ -16,7 +16,7 @@ class PowerTuning(Construct):
             location=sam.CfnApplication.ApplicationLocationProperty(
                 application_id=('arn:aws:serverlessrepo:us-east-1:451282441545:'
                                 'applications/aws-lambda-power-tuning'),
-                semantic_version='4.2.1',
+                semantic_version='4.3.2',
             ),
             parameters={
                 "lambdaResource": f"{function_arn}*",

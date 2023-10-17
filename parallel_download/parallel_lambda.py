@@ -19,7 +19,7 @@ class Function(Construct):
     def __init__(self, scope: Construct, construct_id: str, *,
                  bucket_name: str,
                  max_workers: int = 1000,
-                 runtime: lambda_.Runtime = lambda_.Runtime.PYTHON_3_9,
+                 runtime: lambda_.Runtime = lambda_.Runtime.PYTHON_3_11,
                  memory_size: Union[int, float, None] = 2304,
                  architecture: lambda_.Architecture = lambda_.Architecture.ARM_64,
                  timeout: Duration = Duration.seconds(300),
