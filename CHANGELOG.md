@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Lambda function runtime changed to Python 3.11.
 - Power Tuning version bumped to 4.3.2.
 - Updated cdk.json to the definition set on cdk 2.101.1.
+- Updated the Lambda function memory to 2,408 MB after new tests.
 
 ## [1.1.0] - 2023-01-20
 ### Changed
