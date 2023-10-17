@@ -1,3 +1,3 @@
-aws-cdk-lib~=2.61.1
+aws-cdk-lib~=2.101.1
 constructs>=10.0.0,<11.0.0
-cdk-nag~=2.21.68
+cdk-nag~=2.27.164
