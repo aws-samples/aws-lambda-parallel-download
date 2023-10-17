@@ -14,7 +14,7 @@ threads can execute the S3 object download simultaneously.
 The sample code uses one 8.3 KB object at S3 with JSON data read 
 multiple times. After reading the object, it is decoded from JSON to 
 Python object. The result after running this sample was 1,000 reads 
-processed in 3 seconds and 10,000 reads processed in 25 seconds using 
+processed in 3 seconds and 10,000 reads processed in 24 seconds using 
 a Lambda configured with 2,304 MB. Increasing the Lambda memory didn't 
 help to decrease the time to run the task.​
 
