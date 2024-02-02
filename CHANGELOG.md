@@ -3,9 +3,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [1.1.1] - 2023-10-16
+## [1.1.2] - 2024-02-02
 ### Changed
 - aws-cdk-lib version bumped to 2.101.1.
+- cdk-nag version bumped to 2.28.27.
+- Lambda function runtime changed to Python 3.12.
+- Power Tuning version bumped to 4.3.3.
+
+## [1.1.1] - 2023-10-16
+### Changed
+- aws-cdk-lib version bumped to 2.126.0.
 - cdk-nag version bumped to 2.27.64.
 - Lambda function runtime changed to Python 3.11.
 - Power Tuning version bumped to 4.3.2.
@@ -31,7 +38,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   configurations.
 - CDK code to deploy the infrastructure.
 
-
-[1.1.1]: https://gitlab.aws.dev/eduborto/apg-lambda-parallel-download/-/tree/v1.1.1
-[1.1.0]: https://gitlab.aws.dev/eduborto/apg-lambda-parallel-download/-/tree/v1.1.0
-[1.0.0]: https://gitlab.aws.dev/eduborto/apg-lambda-parallel-download/-/tree/v1.0.0
+[1.1.2]: https://github.com/aws-samples/aws-lambda-parallel-download/tree/v1.1.2
+[1.1.1]: https://github.com/aws-samples/aws-lambda-parallel-download/tree/v1.1.1
+[1.1.0]: https://github.com/aws-samples/aws-lambda-parallel-download/tree/v1.1.0
+[1.0.0]: https://github.com/aws-samples/aws-lambda-parallel-download/tree/v1.0.0
