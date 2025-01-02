@@ -25,7 +25,8 @@ class ParallelDownloadStack(Stack):
 
         lambda_fn = parallel_lambda.Function(
             self, "ParallelLambda",
-            bucket_name=sample.bucket.bucket_name
+            bucket_name=sample.bucket.bucket_name,
+            max_workers=30,
         )
 
         lambda_fn.lambda_function.role.add_to_principal_policy(iam.PolicyStatement(
