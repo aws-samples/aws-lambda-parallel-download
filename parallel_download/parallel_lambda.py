@@ -20,7 +20,7 @@ class Function(Construct):
                  bucket_name: str,
                  max_workers: int = 1000,
                  runtime: lambda_.Runtime = lambda_.Runtime.PYTHON_3_13,
-                 memory_size: Union[int, float, None] = 2048,
+                 memory_size: Union[int, float, None] = 2304,
                  architecture: lambda_.Architecture = lambda_.Architecture.ARM_64,
                  timeout: Duration = Duration.seconds(600),
                  **kwargs):
